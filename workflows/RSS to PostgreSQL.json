@@ -1,0 +1,207 @@
+{
+  "name": "RSS to PostgreSQL",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -224,
+        0
+      ],
+      "id": "9a27f134-dbd5-4f3d-9586-f98f7f5a2646",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "rss_articles",
+          "mode": "list",
+          "cachedResultName": "rss_articles"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "title": "={{ $json.title }}",
+            "link": "={{ $json.link }}",
+            "pub_date": "={{ $json.pubDate }}"
+          },
+          "matchingColumns": [
+            "link"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "pub_date",
+              "displayName": "pub_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "inserted_at",
+              "displayName": "inserted_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -16,
+        0
+      ],
+      "id": "807c2124-dee3-43d6-bf94-edfffa13b6ce",
+      "name": "Insert or update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "9Qxcuwbd5IRIC054",
+          "name": "Postgres_Local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 2,
+              "triggerAtMinute": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -448,
+        -16
+      ],
+      "id": "cb7ce319-4f39-4771-b67e-1e9296389340",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "7899716689",
+        "text": "=<b>Nouvel article AI trouvé !</b>  \n📌 <b>Titre :</b> {{ $json[\"title\"] }}  \n🔗 <b>Lien :</b> <a href=\"{{ $json[\"link\"] }}\">Lire l'article</a>  \n🕒 <b>Date :</b> {{ $json[\"pub_date\"] }}\n",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        0
+      ],
+      "id": "4fd43bf5-1f56-4a1e-b0b4-24bb7c714cf0",
+      "name": "Send a text message",
+      "webhookId": "07b0efd2-d679-436b-8a2e-97e8aee9c398",
+      "credentials": {
+        "telegramApi": {
+          "id": "vBNkjrXx8L84M68v",
+          "name": "Telegram account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Insert or update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert or update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c23fe769-d48d-452c-b2c0-018653d38c5b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fe222aaf36a74af8f4684ded2ac65539ba516da582cc38693c6e2ed4bd5148c1"
+  },
+  "id": "uXwVH13WMNmasC0J",
+  "tags": []
+}
