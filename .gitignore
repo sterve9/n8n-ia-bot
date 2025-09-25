@@ -1,0 +1,16 @@
+# Fichiers sensibles
+.env
+
+# Logs
+*.log
+
+# Docker volumes (ne pas versionner les données locales)
+n8n-portfolio_postgres-data/
+n8n-portfolio_n8n-data/
+
+# Node.js
+node_modules/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
