@@ -1,0 +1,14 @@
+# n8n Portfolio
+
+Ce dépôt regroupe tous mes projets réalisés avec **n8n** en environnement Docker.  
+Chaque projet contient :  
+- Un export `.json` du workflow (dans `workflows/`)  
+- Une documentation dédiée (dans `docs/`)  
+
+## 📌 Projets
+
+1. **Project 1 - Bot IA News**  
+   - Fichier workflow : `workflows/project1_newsbot.json`  
+   - Documentation : [docs/project1_README.md](docs/project1_README.md)  
+
+👉 De nouveaux projets seront ajoutés au fur et à mesure de mon apprentissage.

@@ -1,20 +1,18 @@
 services:
   postgres:
     image: postgres:16
-    container_name: n8n-portfolio-postgres-1
     restart: always
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: n8n
     volumes:
       - n8n-portfolio_postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   n8n:
     image: n8nio/n8n:latest
-    container_name: n8n-portfolio-n8n-1
     restart: always
     ports:
       - "5678:5678"
@@ -25,15 +23,14 @@ services:
       - DB_POSTGRESDB_DATABASE=n8n
       - DB_POSTGRESDB_USER=postgres
       - DB_POSTGRESDB_PASSWORD=postgres
-      - N8N_BASIC_AUTH_ACTIVE=false
       - N8N_HOST=localhost
       - N8N_PORT=5678
       - N8N_PROTOCOL=http
-      - TZ=Europe/Paris
-    depends_on:
-      - postgres
+      - NODE_ENV=production
     volumes:
       - n8n-portfolio_n8n-data:/home/node/.n8n
+    depends_on:
+      - postgres
 
 volumes:
   n8n-portfolio_postgres-data:
